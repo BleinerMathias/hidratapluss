@@ -1,47 +1,25 @@
 // screens/WaterCalculatorScreen.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { WaterContext } from '../context/WaterContext';
+import { useNavigation } from '@react-navigation/native';
 
 const WaterCalculatorScreen = () => {
+  const navigation = useNavigation();
+  const { waterData, updateWaterData } = useContext(WaterContext);
+
   const [weight, setWeight] = useState<string>('');
   const [waterIntake, setWaterIntake] = useState<number | null>(null);
   const [savedWeight, setSavedWeight] = useState<string | null>(null);
 
-  useEffect(() => {
-    // Carrega o peso salvo ao entrar na tela
-    loadSavedWeight();
-  }, []);
-
-  const loadSavedWeight = async () => {
-    try {
-      const savedWeight = await AsyncStorage.getItem('weight');
-      if (savedWeight !== null) {
-        setSavedWeight(savedWeight);
-      }
-    } catch (error) {
-      console.error('Erro ao carregar o peso salvo:', error);
-    }
-  };
-
-  const saveWeight = async (value: string) => {
-    try {
-      await AsyncStorage.setItem('weight', value);
-      setSavedWeight(value);
-    } catch (error) {
-      console.error('Erro ao salvar o peso:', error);
-    }
-  };
-
   const calculateWaterIntake = () => {
-    let temperature = 0
-    let intake = parseFloat(weight) * 35;
-    // Adiciona 200 ml se a temperatura for superior a 30°C
-    if (temperature && temperature > 30) {
-      intake += 200;
-    }
+    const intake = parseFloat(weight) * 35;
     setWaterIntake(intake);
-    saveWeight(weight); // Salva o peso após o cálculo
+    updateWaterData(weight, intake, waterData.consumed);
+  };
+
+  const handleNavigateToLog = () => {
+    navigation.navigate('LogWater');
   };
 
   return (
@@ -57,9 +35,7 @@ const WaterCalculatorScreen = () => {
       {waterIntake !== null && (
         <Text style={styles.result}>Você deve beber {waterIntake} ml de água por dia.</Text>
       )}
-      {savedWeight !== null && (
-        <Text style={styles.savedWeight}>Peso salvo: {savedWeight} kg</Text>
-      )}
+      <Button title="Ir para o Log de Água" onPress={handleNavigateToLog} />
     </View>
   );
 };
@@ -85,10 +61,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
     fontSize: 18,
     fontWeight: 'bold',
-  },
-  savedWeight: {
-    marginTop: 10,
-    color: 'gray',
   },
 });
 
