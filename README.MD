@@ -11,7 +11,7 @@ Logo após, ele pode registrar seu consumo, onde um gráfico é gerado de acordo
 Todo o app foi escrito utilizando o CHATGPT e correções pelo TABNINE.
 
 ### (Video com o app funcionando)
-📽️ https://youtu.be/rQ6CtzwH7jg
+📽️ [Assista o vídeo](https://youtu.be/rQ6CtzwH7jg)
 
 # Recursos
 - Calculadora de meta de consumo baseado no peso ✅
