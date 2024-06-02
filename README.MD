@@ -10,12 +10,12 @@ Logo após, ele pode registrar seu consumo, onde um gráfico é gerado de acordo
 
 Todo o app foi escrito utilizando o CHATGPT e correções pelo TABNINE.
 
-### (Vídeo com o app funcionando)
-📽️ [Assista ao vídeo](https://youtu.be/WdrI3bl5VxU)
+### (Video com o app funcionando)
+📽️ https://youtu.be/rQ6CtzwH7jg
 
-## Recursos
-- Calculadora de meta de consumo baseada no peso ✅
-- Consumo de API do clima ❌
+# Recursos
+- Calculadora de meta de consumo baseado no peso ✅
+- Consumo de api do clima ❌
 
 ## Tecnologias
 O app foi desenvolvido utilizando o EXPO - React Native.
