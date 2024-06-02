@@ -1,7 +1,7 @@
-// screens/LogWaterScreen.tsx
 import React, { useContext, useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import { WaterContext } from '../context/WaterContext';
+import PieChart from 'react-native-pie-chart';
 
 const LogWaterScreen = () => {
   const { waterData, updateConsumed } = useContext(WaterContext);
@@ -27,18 +27,22 @@ const LogWaterScreen = () => {
           },
         ],
         { cancelable: false }
-      )
+      );
       setAmount('');
-    }else{
+    } else {
       Alert.alert('Erro', 'Digite um valor válido', [
         {
           text: 'OK',
           onPress: () => console.log('OK Pressed'),
           style: 'cancel',
         },
-      ])
+      ]);
     }
   };
+
+  const dailyIntake = waterData.dailyIntake;
+  const consumed = waterData.consumed;
+  const remaining = dailyIntake - consumed > 0 ? dailyIntake - consumed : 0;
 
   return (
     <View style={styles.container}>
@@ -50,8 +54,16 @@ const LogWaterScreen = () => {
         onChangeText={setAmount}
       />
       <Button title="Registrar Consumo" onPress={handleLogWater} />
-      <Text style={styles.info}>Diária recomendada: {waterData.dailyIntake} ml</Text>
-      <Text style={styles.info}>Consumido hoje: {waterData.consumed} ml</Text>
+      <Text style={styles.info}>Diária recomendada: {dailyIntake} ml</Text>
+      <Text style={styles.info}>Consumido hoje: {consumed} ml</Text>
+      
+      <PieChart
+        widthAndHeight={200}
+        series={[consumed, remaining]}
+        sliceColor={['#3498db', '#ecf0f1']}
+        coverRadius={0.45}
+        coverFill={'#FFF'}
+      />
     </View>
   );
 };
