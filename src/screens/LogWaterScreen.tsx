@@ -1,13 +1,28 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import { WaterContext } from '../context/WaterContext';
+import { useNavigation } from '@react-navigation/native'; // Importando o hook useNavigation
 import PieChart from 'react-native-pie-chart';
 import Modal from 'react-native-modal';
+
+const ExcessAlert = ({ excess }: { excess: number }) => {
+
+  let textInfo = `${excess.toFixed(2)} L`;
+
+  return (
+    <View style={styles.excessAlertContainer}>
+      <Text style={styles.excessAlertText}>
+        Parabéns! Você consumiu {textInfo} de água a mais do que a meta.
+      </Text>
+    </View>
+  );
+};
 
 const LogWaterScreen = () => {
   const { waterData, updateConsumed } = useContext(WaterContext);
   const [amount, setAmount] = useState<string>('');
   const [isModalVisible, setModalVisible] = useState<boolean>(false);
+  const navigation = useNavigation(); // Inicializando o hook useNavigation
 
   const handleLogWater = () => {
     const consumed = parseFloat(amount);
@@ -44,10 +59,36 @@ const LogWaterScreen = () => {
 
   const dailyIntake = waterData.dailyIntake;
   const consumed = waterData.consumed / 1000; // Convertendo ml para litros
-  const remaining = (dailyIntake - waterData.consumed) / 1000; // Convertendo ml para litros
+  let remaining = (dailyIntake - waterData.consumed) / 1000; // Convertendo ml para litros
+
+  // Se o valor consumido for maior que a meta, definimos o restante como 0
+  if (remaining < 0) {
+    remaining = 0;
+  }
+
+  const [excessAlertVisible, setExcessAlertVisible] = useState<boolean>(false);
+  const [numExcess, setNumExcess] = useState<number>(0);
+
+  function calculateExcess() {
+    if (consumed > dailyIntake / 1000) {
+      setExcessAlertVisible(true);
+      setNumExcess(consumed - dailyIntake / 1000);
+    } else {
+      setExcessAlertVisible(false);
+      setNumExcess(0);
+    }
+  }
+
+  useEffect(()=> {
+    // Calcula o excedente, se houver
+    calculateExcess()
+  },[, consumed])
 
   return (
+
     <View style={styles.container}>
+      {excessAlertVisible && <ExcessAlert excess={numExcess} />}
+
       <Text style={styles.title}>Seu consumo de água hoje:</Text>
       
       <View style={styles.chartContainer}>
@@ -153,6 +194,19 @@ const styles = StyleSheet.create({
   info: {
     marginTop: 10,
     fontSize: 16,
+  },
+  excessAlertContainer: {
+    backgroundColor: '#2ecc71',
+    opacity: 0.8,
+    padding: 10,
+    borderRadius: 5,
+    marginVertical: 10,
+    marginBottom: 20,
+  },
+  excessAlertText: {
+    color: '#fff',
+    fontSize: 16,
+    textAlign: 'center',
   },
 });
 

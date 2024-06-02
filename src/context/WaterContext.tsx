@@ -6,6 +6,7 @@ type WaterData = {
   weight: string | null;
   dailyIntake: number;
   consumed: number;
+  excess?: number; // Novo campo para armazenar o excedente
 };
 
 type WaterContextType = {
@@ -53,7 +54,11 @@ export const WaterProvider: React.FC = ({ children }) => {
   const updateConsumed = async (consumed: number) => {
     try {
       const newConsumed = waterData.consumed + consumed;
-      const newData: WaterData = {...waterData, consumed: newConsumed };
+      let excess = 0; // Inicializa o excedente como 0
+      if (newConsumed > waterData.dailyIntake) {
+        excess = newConsumed - waterData.dailyIntake; // Calcula o excedente
+      }
+      const newData: WaterData = {...waterData, consumed: newConsumed, excess };
       setWaterData(newData);
       const jsonValue = JSON.stringify(newData);
       await AsyncStorage.setItem('waterData', jsonValue);
